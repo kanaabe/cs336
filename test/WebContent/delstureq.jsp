@@ -35,31 +35,33 @@
 		<%
 			try {		
 				
-				String index = request.getParameter("index");
-				String ruid = (String) session.getAttribute("ruid");
+				int index = Integer.parseInt(request.getParameter("index"));
+				int ruid = (Integer) session.getAttribute("ruid");
 
 				java.sql.Connection con;			
 				Statement stmt;			
-				//ResultSet rs;		
+				//ResultSet rs;
+				int rs = 0;
 
 				Context ctx = new InitialContext();
 				DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/flylo");	
 				con = ds.getConnection();
 				stmt = con.createStatement();
 				
-				int rs = stmt.executeUpdate("delete from request where index='"+index+"' AND ruid='"+ruid+"'");
+				try {
+					rs = stmt.executeUpdate("delete from request where index='"+index+"' AND sruid='"+ruid+"'");
+				}  catch (Exception e) {
+					%> Error in deleting request. Make sure the index# is correct.<br>Please return to the <a href="student.jsp"><b>Student Page</b></a> to continue. <%
+				}
 				
-                if(rs>0) {
-                	%> Registration Successful. Please return to the <a href="student.jsp"><b>Student Page</b></a> to continue. <%
-      			} else {
-      				%> Error in deleting request. Please return to the <a href="student.jsp"><b>Student Page</b></a> to continue. <%
-      			} 
+				if(rs>0) {
+                	%> Deleting Request Successful. Please return to the <a href="student.jsp"><b>Student Page</b></a> to continue. <%
+				}
 
-				
-				//rs.close();
+                //rs.close();
 				stmt.close();
-				con.close();
-				
+				con.close();				
+                
 			} catch (Exception e) {
 				out.println(e.getMessage());
 			}

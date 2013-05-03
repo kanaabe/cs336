@@ -41,27 +41,41 @@
 	<% 
 	try {
 		
-		String ruid = (String) session.getAttribute("ruid");
+		int ruid = (Integer) session.getAttribute("ruid");
 		
 		java.sql.Connection con;			
 		Statement stmt;			
-		ResultSet rs;			
+		ResultSet rs;		
 
 		Context ctx = new InitialContext();
 		DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/flylo");	
 		con = ds.getConnection();
 		stmt = con.createStatement();
 				
-		rs = stmt.executeQuery("SELECT title,index,status	 from request");
+		rs = stmt.executeQuery("SELECT ind,cid,semester,year	 from courseOffering where iruid='"+ruid+"'");
 		
-		out.println("Table is not implemented yet.");
 		out.println("<table border=1 width=400>");
-		out.println("<tr><td>    Course Name" + "</td><td>    Index#" + "</td><td>    Status" + "</td></tr>");
+		out.println("<tr><td>    Course Name" + "</td><td>    Index#" + "</td><td>    # of Requests" + "</td><td>    Semester" + "</td><td>    Year" + "</td></tr>");
 		while (rs.next()) {
-			String title = rs.getString(1);
-			String index = rs.getString(2);
-			String status = rs.getString(3);
-			out.println("<tr><td>" + title + "</td><td>" + index + "</td><td>" + status + "</td></tr>");
+			int ind = rs.getInt(1);
+			int cid = rs.getInt(2);
+			String semester = rs.getString(3);
+			int year = rs.getInt(4);			
+			
+			ResultSet rs2;
+			rs2 = stmt.executeQuery("SELECT title	 from course where cid='"+cid+"'");
+			String title = "Error: Default";
+			while (rs2.next()) {
+				title = rs2.getString(1);
+			}
+			rs2 = stmt.executeQuery("SELECT count(*)	 from requests where iruid='"+ruid+"' and ind='"+ind+"'");
+			int numreq = 999;
+			while (rs2.next()) {
+				numreq = rs2.getInt(1);
+			}
+			rs2.close();
+			
+			out.println("<tr><td>" + title + "</td><td>" + ind + "</td><td>" + numreq + "</td><td>" + semester + "</td><td>" + year + "</td></tr>");
 		} 
 		out.println("</table>");
 		

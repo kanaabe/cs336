@@ -35,31 +35,54 @@
 		<%
 			try {		
 				
-				String name = request.getParameter("name");
-				String ruid = request.getParameter("ruid");
-				String netid = request.getParameter("netid");
-				String email = request.getParameter("email");
-				String pass = request.getParameter("pass");
+				int ruid = (Integer) session.getAttribute("ruid");
+				int ind = Integer.parseInt(request.getParameter("ind"));
+				String comments = request.getParameter("comments");
+				int cid = 0;
+				String title = "";
+				int iruid = 0;
+
 
 				java.sql.Connection con;			
 				Statement stmt;			
-				//ResultSet rs;		
+				ResultSet rs;		
 
 				Context ctx = new InitialContext();
 				DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/flylo");	
 				con = ds.getConnection();
 				stmt = con.createStatement();
 				
-				int rs = stmt.executeUpdate("insert into instructor set name='"+name+"',ruid='"+ruid+"',netid='"+netid+"',email='"+email+"',password='"+pass+"'");
-				
-                if(rs>0) {
-                	%> Request Successful. Please return to the <a href="student.jsp"><b>Student</b></a> page to continue. <%
+				rs = stmt.executeQuery("SELECT cid,iruid	 from courseOffering where ind='"+ind+"'");
+				int count=0;
+				while (rs.next()) {
+					count++;
+					cid = rs.getInt(1);
+					iruid = rs.getInt(2);
+				}
+				if(count>0) {
+					rs = stmt.executeQuery("SELECT title	 from course where cid='"+cid+"'");	
+					count=0;
+					while (rs.next()) {
+						count++;
+						title = rs.getString(1);
+					}
+					if(count>0) {
+						int rs2 = stmt.executeUpdate("insert into request set sruid='"+ruid+"',iruid='"+iruid+"',ind='"+ind+"',cid='"+cid+"',title='"+title+"',comments='"+comments+"',priority='"+99+"',status='"+"Pending"+"'");
+						
+		                if(rs2>0) {
+		                	%> Request Successful. Please return to the <a href="student.jsp"><b>Student</b></a> page to continue. <%
+		      			} else {
+		              		response.sendRedirect("addreqform.jsp?msg=Request could not be added.  Please try again.");
+		      			}
+					} else {
+						response.sendRedirect("addreqform.jsp?msg=Course ID does not exist.");
+					}
       			} else {
-              		response.sendRedirect("addreqform.jsp?msg=Request Failed.  Please try again.");
-      			} 
-
+      				response.sendRedirect("addreqform.jsp?msg=The requested Index# does not exist");
+      			}
+																				
 				
-				//rs.close();
+				rs.close();
 				stmt.close();
 				con.close();
 				

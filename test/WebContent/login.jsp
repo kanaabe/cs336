@@ -35,10 +35,10 @@
 		<%
 			try {		
 				
-				String ruid = request.getParameter("ruid");
+				int ruid = Integer.parseInt(request.getParameter("ruid"));
 				String pass = request.getParameter("pass");
 				
-				if (ruid.equals("admin") && pass.equals("admin")) {
+				if (ruid == 0000 && pass.equals("admin")) {
 					response.sendRedirect("admin.jsp");
 				}
 				
@@ -51,7 +51,7 @@
 				con = ds.getConnection();
 				stmt = con.createStatement();
 				
-				rs = stmt.executeQuery("select * from instructor where ruid='"+ruid+"' and password='"+pass+"'");				
+				rs = stmt.executeQuery("select * from instructor where iruid='"+ruid+"' and password='"+pass+"'");				
 				int count=0;
 
 				while (rs.next()) {
@@ -62,7 +62,7 @@
                 	session.setAttribute("ruid", ruid);
      			 	response.sendRedirect("instructor.jsp");     			 	
       			} else {
-      				rs = stmt.executeQuery("select * from student where ruid='"+ruid+"' and password='"+pass+"'");				
+      				rs = stmt.executeQuery("select * from student where sruid='"+ruid+"' and password='"+pass+"'");				
     				count=0;
 
     				while (rs.next()) {

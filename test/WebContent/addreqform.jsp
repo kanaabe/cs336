@@ -32,17 +32,14 @@
 		
 <h2>New SPN Request</h2>
 
-	Ignore for now.  It's the same as registration.
 	<form name="form" method="post" action="addreq.jsp">
 	<table>
-		<tr><td>Name:</td><td><input type="text" name="name"></td></tr>
-		<tr><td>RUID:</td><td><input type="text" name="ruid"></td></tr>
-		<tr><td>NetID:</td><td><input type="text" name="netid"></td></tr>
-		<tr><td>Email:</td><td><input type="text" name="email"></td></tr>
-		<tr><td>Password:</td><td><input type="password" name="pass"></td></tr>
+		<tr><td>Course Index#:</td><td><input type="text" name="ind"></td></tr>
+		<tr><td>Comments:</td><td><textarea name="comments" rows="5" cols="40"></textarea></td></tr>
 		<tr><td></td><td><input type="submit" value="Submit"></td></tr>
 	</table>
 	</form>
+	
 	
 		<%
 		String msg=request.getParameter("msg");

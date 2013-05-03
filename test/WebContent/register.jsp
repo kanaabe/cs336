@@ -36,7 +36,7 @@
 			try {		
 				
 				String name = request.getParameter("name");
-				String ruid = request.getParameter("ruid");
+				int ruid = Integer.parseInt(request.getParameter("ruid"));
 				String netid = request.getParameter("netid");
 				String email = request.getParameter("email");
 				String pass = request.getParameter("pass");

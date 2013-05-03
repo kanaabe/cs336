@@ -32,7 +32,7 @@
 		
 <h2>User Login</h2>
 
-	<a href="regform.jsp"><b>Instructor Registration</b></a>
+	<a href="regform.jsp"><b>Instructor Registration</b></a><br>
 	<a href="regformstu.jsp"><b>Student Registration</b></a>
 	<form name="form" method="post" action="login.jsp">
 	<table>

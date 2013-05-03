@@ -41,7 +41,7 @@
 	<% 
 	try {
 		
-		String ruid = (String) session.getAttribute("ruid");
+		int ruid = (Integer) session.getAttribute("ruid");
 		
 		java.sql.Connection con;			
 		Statement stmt;			
@@ -52,13 +52,13 @@
 		con = ds.getConnection();
 		stmt = con.createStatement();
 				
-		rs = stmt.executeQuery("SELECT title,index,status	 from request");
+		rs = stmt.executeQuery("SELECT title,ind,status	 from request where sruid='"+ruid+"'");
 		
 		out.println("<table border=1 width=400>");
 		out.println("<tr><td>    Course Name" + "</td><td>    Index#" + "</td><td>    Status" + "</td></tr>");
 		while (rs.next()) {
 			String title = rs.getString(1);
-			String index = rs.getString(2);
+			int index = rs.getInt(2);
 			String status = rs.getString(3);
 			out.println("<tr><td>" + title + "</td><td>" + index + "</td><td>" + status + "</td></tr>");
 		} 
