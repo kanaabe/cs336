@@ -30,27 +30,38 @@
 
 	<body>
 		
-<h2>New SPN Request</h2>
+<h2>Add SPN Page</h2>
+	
+		<%
+			try {		
+				
+				int spn = Integer.parseInt(request.getParameter("spn"));
+				int ind = Integer.parseInt(request.getParameter("index"));
+				int iruid = (Integer) session.getAttribute("ruid");
 
-	<form name="form" method="post" action="addreq.jsp">
-	<table>
-		<tr><td>Course Index#:</td><td><input type="text" name="ind"></td></tr>
-		<tr><td>Is this course required for your major?:</td><td><input type="checkbox" name="required" value="true"></td></tr>
-		<tr><td>Comments:</td><td><textarea name="comments" rows="5" cols="40"></textarea></td></tr>
-		<tr><td></td><td><input type="submit" value="Submit"></td></tr>
-	</table>
-	</form>
-	
-	
-		<%
-		String msg=request.getParameter("msg");
-		if(msg!=null){
-    	%>
-			<label><font color="red"><%=msg%></font></label> 
-		<%
-		}
-   		%>
-   		
+				java.sql.Connection con;			
+				Statement stmt;			
+				//ResultSet rs;		
+
+				Context ctx = new InitialContext();
+				DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/flylo");	
+				con = ds.getConnection();
+				stmt = con.createStatement();
+				
+				int rs = stmt.executeUpdate("insert into spn set number='"+spn+"',iruid='"+iruid+"',ind='"+ind+"'");
+				
+                if(rs>0) {
+                	response.sendRedirect("student.jsp?index=" + ind);
+      			}
+				
+				//rs.close();
+				stmt.close();
+				con.close();
+				
+			} catch (Exception e) {
+				out.println(e.getMessage());
+			}
+		%>
+		
 	</body>
 </html>
-		

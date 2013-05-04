@@ -35,25 +35,28 @@
 		<%
 			try {		
 				
-				String index = request.getParameter("index");
-				String ruid = (String) session.getAttribute("ruid");
+				int ind = Integer.parseInt(request.getParameter("index"));
+				int iruid = (Integer) session.getAttribute("ruid");
 
 				java.sql.Connection con;			
 				Statement stmt;			
-				//ResultSet rs;		
+				//ResultSet rs;
+				int rs = 0;
 
 				Context ctx = new InitialContext();
 				DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/flylo");	
 				con = ds.getConnection();
 				stmt = con.createStatement();
 				
-				int rs = stmt.executeUpdate("delete from request where index='"+index+"' AND ruid='"+ruid+"'");
+				try {
+					rs = stmt.executeUpdate("delete from courseOffering where ind='"+ind+"' AND iruid='"+iruid+"'");
+				}  catch (Exception e) {
+					%> Error in deleting course offering. Make sure the index# is correct.<br>Please return to the <a href="instructor.jsp"><b>Instructor Page</b></a> to continue. <%
+				}
 				
-                if(rs>0) {
-                	%> Registration Successful. Please return to the <a href="instructor.jsp"><b>Instructor Page</b></a> to continue. <%
-      			} else {
-      				%> Error in deleting request. Please return to the <a href="instructor.jsp"><b>Instructor Page</b></a> to continue. <%
-      			} 
+				if(rs>0) {
+                	%> Deleting Course Offering Successful. Please return to the <a href="instructor.jsp"><b>Instructor Page</b></a> to continue. <%
+				}
 
 				
 				//rs.close();

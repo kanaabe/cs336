@@ -36,7 +36,10 @@
 			try {		
 				
 				int ind = Integer.parseInt(request.getParameter("index"));
-				int sruid = (Integer) session.getAttribute("ruid");
+				int sruid = Integer.parseInt(request.getParameter("sruid"));
+				String icomments = request.getParameter("comments");
+				String command = request.getParameter("action");
+				int iruid = (Integer) session.getAttribute("ruid");
 
 				java.sql.Connection con;			
 				Statement stmt;			
@@ -49,19 +52,33 @@
 				stmt = con.createStatement();
 				
 				try {
-					rs = stmt.executeUpdate("delete from request where ind='"+ind+"' AND sruid='"+sruid+"'");
+					if(command.equals("Accept")) {
+						ResultSet rs2;
+						rs2 = stmt.executeQuery("select number from spn where ind='"+ind+"' AND iruid='"+iruid+"'");
+						if(rs2.next()) {
+							String spn = rs2.getString(1);
+							rs = stmt.executeUpdate("update request set icomments='"+icomments+"',status='"+spn+"' where ind='"+ind+"' AND iruid='"+iruid+"' AND sruid='"+sruid+"'");
+							rs = stmt.executeUpdate("delete from spn where ind='"+ind+"' AND iruid='"+iruid+"'AND number='"+Integer.parseInt(spn)+"'");
+						} else response.sendRedirect("viewrequest.jsp?msg=No Special Permission Numbers Available!&ind="+ind+"&sruid="+sruid);						
+
+					} else if(command.equals("Deny")){
+						rs = stmt.executeUpdate("update request set icomments='"+icomments+"',status='"+"Denied"+"' where ind='"+ind+"' AND iruid='"+iruid+"' AND sruid='"+sruid+"'");
+					} else {
+						%> Buttons not working. Please return to the <a href="instructor.jsp"><b>Instructor Page</b></a> to continue. <%
+					}
 				}  catch (Exception e) {
-					%> Error in deleting request. Make sure the index# is correct.<br>Please return to the <a href="student.jsp"><b>Student Page</b></a> to continue. <%
+					%> Error in Accepting/Denying a Request. Please return to the <a href="instructor.jsp"><b>Instructor Page</b></a> to continue. <%
 				}
 				
 				if(rs>0) {
-                	%> Deleting Request Successful. Please return to the <a href="student.jsp"><b>Student Page</b></a> to continue. <%
+                	response.sendRedirect("viewcourse.jsp?index=" + ind);
 				}
 
-                //rs.close();
+				
+				//rs.close();
 				stmt.close();
-				con.close();				
-                
+				con.close();
+				
 			} catch (Exception e) {
 				out.println(e.getMessage());
 			}

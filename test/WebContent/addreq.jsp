@@ -37,6 +37,8 @@
 				
 				int ruid = (Integer) session.getAttribute("ruid");
 				int ind = Integer.parseInt(request.getParameter("ind"));
+				boolean required = false;
+				if (request.getParameter("required").equals("true")) required = true;
 				String comments = request.getParameter("comments");
 				int cid = 0;
 				String title = "";
@@ -67,7 +69,7 @@
 						title = rs.getString(1);
 					}
 					if(count>0) {
-						int rs2 = stmt.executeUpdate("insert into request set sruid='"+ruid+"',iruid='"+iruid+"',ind='"+ind+"',cid='"+cid+"',title='"+title+"',comments='"+comments+"',priority='"+99+"',status='"+"Pending"+"'");
+						int rs2 = stmt.executeUpdate("insert into request set sruid='"+ruid+"',iruid='"+iruid+"',ind='"+ind+"',cid='"+cid+"',title='"+title+"',comments='"+comments+"',priority='"+99+"',status='"+"Pending"+"',required='"+required+"'");
 						
 		                if(rs2>0) {
 		                	%> Request Successful. Please return to the <a href="student.jsp"><b>Student</b></a> page to continue. <%

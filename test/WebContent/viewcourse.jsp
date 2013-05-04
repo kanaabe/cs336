@@ -37,11 +37,21 @@
 	</form>
 
 <br>
-	Students Requesting Special Permission Numbers:
+	
 	<% 
 	try {
+		int ind = Integer.parseInt(request.getParameter("index"));
+		int iruid = (Integer) session.getAttribute("ruid");
 		
-		String ruid = (String) session.getAttribute("ruid");
+		%>
+		<form name="input" method="post" action="addspn.jsp">
+		To add a SPN to this course: <input type="text" name="spn">
+		
+		<% out.println("<input type=\"hidden\" value=" + ind + " name=\"index\">"); %>
+		
+		<input type="submit" value="Add SPN" />
+		</form><br>	
+		<%
 		
 		java.sql.Connection con;			
 		Statement stmt;			
@@ -52,41 +62,35 @@
 		con = ds.getConnection();
 		stmt = con.createStatement();
 				
-		rs = stmt.executeQuery("SELECT title,index,status	 from request");
-		
-		out.println("Table is not implemented yet.");
+		rs = stmt.executeQuery("SELECT sruid,status	 from request where ind='"+ind+"' AND iruid='"+iruid+"'");
+		out.println("Students Requesting Special Permission Numbers:");
 		out.println("<table border=1 width=400>");
-		out.println("<tr><td>    Course Name" + "</td><td>    Index#" + "</td><td>    Status" + "</td></tr>");
+		out.println("<tr><td>    Student Name" + "</td><td>    RUID#" + "</td><td>    Status" + "</td></tr>");
 		while (rs.next()) {
-			String title = rs.getString(1);
-			String index = rs.getString(2);
-			String status = rs.getString(3);
-			out.println("<tr><td>" + title + "</td><td>" + index + "</td><td>" + status + "</td></tr>");
+			int sruid = rs.getInt(1);
+			String status = rs.getString(2);
+			ResultSet rs2;
+			rs2 = stmt.executeQuery("SELECT name	 from student where sruid='"+sruid+"'");
+			String name = "Error: Default";
+			while (rs2.next()) {
+				name = rs2.getString(1);
+			}
+			rs2.close();
+			out.println("<tr><td>" + name + "</td><td>" + sruid + "</td><td>" + status + "</td><td>" + 
+					"<form name=\"form\" method=\"post\" action=\"viewrequest.jsp\"><input type=\"hidden\" value=\"" + ind + "\" name=\"index\"><input type=\"hidden\" value=\"" + sruid + "\" name=\"sruid\"><input type=\"submit\" value=\"View Request\" /></form>"
+					+ "</td></tr>");
 		} 
 		out.println("</table>");
 		
 		rs.close();
 		stmt.close();
-		con.close();
-		
-		
+		con.close();				
 		
 	} catch (Exception e) {
 		out.println(e.getMessage());
 	}
 	
 	%>
-	
-	<br>
-	This is as far as I got.  Need to implement pages for these buttons.
-	<form name="input" method="post" action="addcourseform.jsp">
-	To add a SPN to this course: <input type="submit" value="Add Course" />
-	</form>
-	
-	<form name="form" method="post" action="viewcourse.jsp">
-	To view a students specific request (using index#): <input type="text" name="index"> <input type="submit" value="View Requests" />
-	</form>
-	
-   		
+	   		
 	</body>
 </html>
